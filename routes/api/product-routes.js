@@ -6,7 +6,17 @@ const { Product, Category, Tag, ProductTag } = require('../../models');
 // get all products
 router.get('/', (req, res) => {
   // find all products
-  Product.findAll()
+  Product.findAll({
+    attributes: ['id', 'product_name', 'price', 'stock', 'category_id'],
+      include: [
+        {
+          model: Tag,
+          attributes: ['id', 'tag_name'],
+          model: Category,
+          attributes: ['category_name']
+        }
+      ]
+  })
     .then(dbProdData => res.json(dbProdData))
     .catch(err => {
       console.log(err);
@@ -21,7 +31,7 @@ router.get('/:id', (req, res) => {
   Product.findOne({
       where: {
         id: req.params.id
-      }
+      },
   })
     .then(dbProdData => {
       if (!dbProdData) {
@@ -45,7 +55,8 @@ router.post('/', (req, res) => {
       product_name: req.body.product_name,
       price: req.body.price,
       stock: req.body.stock,
-      tagIds: req.body.tagIds
+      category_id: req.body.category_id,
+      tag_id: req.body.tag_id
     })
   
   // Product.create(req.body)
@@ -61,7 +72,7 @@ router.post('/', (req, res) => {
         return ProductTag.bulkCreate(productTagIdArr);
       }
       // if no product tags, just respond
-      res.status(200).json(product);
+      res.status(500).json(product);
     })
     .then((productTagIds) => res.status(200).json(productTagIds))
     .catch((err) => {
@@ -73,7 +84,14 @@ router.post('/', (req, res) => {
 // update product
 router.put('/:id', (req, res) => {
   // update product data
-  Product.update(req.body, {
+  Product.update(
+    {
+      product_name: req.body.product_name,
+      price: req.body.price,
+      stock: req.body.stock, 
+      category_id: req.body.category_id
+    },
+    {
     where: {
       id: req.params.id,
     },
