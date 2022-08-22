@@ -7,41 +7,61 @@ const { Tag, Product, ProductTag } = require('../../models');
 
 router.get('/', (req, res) => {
   // find all tags
-    Tag.findAll()
-      .then(dbTagData => res.json(dbTagData))
-      .catch(err => {
-        console.log(err);
-        res.status(500).json(err);
-      })
+  Tag.findAll({
+
+    include: [
+      {
+        model: Product,
+        through: ProductTag,
+        as: 'tag_id',
+        foreignKey: 'tag_id'
+      }
+    ]
+  })
+    .then(dbTagData => res.json(dbTagData))
+    .catch(err => {
+      console.log(err);
+      res.status(500).json(err);
+    })
   // be sure to include its associated Product data
 });
 
 router.get('/:id', (req, res) => {
   // find a single tag by its `id`
-    Tag.findOne({
-      where: {
-        id: req.params.id
+  Tag.findOne({
+
+    include: [
+      {
+        model: Product,
+        through: ProductTag,
+        as: 'tag_id',
+        foreignKey: 'tag_id'
       }
+    ],
+    
+    where: {
+      id: req.params.id
+    }
+  })
+    .then(dbTagData => {
+      if (!dbTagData) {
+        res.status(404).json({ message: "No item matched that ID" });
+        return;
+      }
+      res.json(dbTagData);
     })
-        .then(dbTagData => {
-          if (!dbTagData) {
-            res.status(404).json({ message: "No item matched that ID" });
-            return;
-          }
-          res.json(dbTagData);
-        })
-        .catch(err => {
-          console.log(err);
-          res.status(500).json(err);
-        });
+    .catch(err => {
+      console.log(err);
+      res.status(500).json(err);
+    });
   // be sure to include its associated Product data
 });
 
 router.post('/', (req, res) => {
   // create a new tag
-    Tag.create({
-        tag_name: req.body.tag_name
-    })
+  Tag.create({
+    tag_name: req.body.tag_name
+  })
     .then(dbTagData => res.json(dbTagData))
     .catch(err => {
       console.log(err);
@@ -56,17 +76,17 @@ router.put('/:id', (req, res) => {
       id: req.params.id
     }
   })
-      .then(dbTagData => {
-        if (!dbTagData[0]) {
-          res.status(404).json({ message: "No tag matched that ID" });
-          return;
-        }
-        res.json(dbTagData);
-      })
-      .catch(err => {
-        console.log(err);
-        res.status(500).json(err);
-      });
+    .then(dbTagData => {
+      if (!dbTagData[0]) {
+        res.status(404).json({ message: "No tag matched that ID" });
+        return;
+      }
+      res.json(dbTagData);
+    })
+    .catch(err => {
+      console.log(err);
+      res.status(500).json(err);
+    });
 });
 
 router.delete('/:id', (req, res) => {
@@ -76,17 +96,17 @@ router.delete('/:id', (req, res) => {
       id: req.params.id
     }
   })
-      .then(dbTagData => {
-        if (!dbTagData) {
-          res.status(404).json({ message: "No item matched that ID" });
-          return;
-        }
-        res.json(dbTagData);
-      })
-      .catch(err => {
-        console.log(err);
-        res.status(500).json(err);
-      });
+    .then(dbTagData => {
+      if (!dbTagData) {
+        res.status(404).json({ message: "No item matched that ID" });
+        return;
+      }
+      res.json(dbTagData);
+    })
+    .catch(err => {
+      console.log(err);
+      res.status(500).json(err);
+    });
 });
 
 module.exports = router;
