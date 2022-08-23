@@ -14,14 +14,6 @@ router.get('/', (req, res) => {
         attributes: ['id', 'category_name']
       }
     ],
-
-    // include: [
-    //   {
-    //     model: Tag,
-    //     through: ProductTag,
-    //     as: 'tags',
-    //   }
-    // ]
   })
     .then(dbProdData => res.json(dbProdData))
     .catch(err => {
@@ -36,18 +28,10 @@ router.get('/:id', (req, res) => {
   // find a single product by its `id`
   Product.findOne({
 
-    // include: [
-    //   {
-    //     model: Category,
-    //     attributes: ['category_name']
-    //   }
-    // ],
-
     include: [
       {
-        model: Tag,
-        through: ProductTag,
-        as: 'product_id'
+        model: Category,
+        attributes: ['id', 'category_name']
       }
     ],
 
