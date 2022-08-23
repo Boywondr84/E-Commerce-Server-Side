@@ -1,7 +1,5 @@
 const router = require('express').Router();
-// const bodyParser = require('body-parser');
 const { Tag, Product, ProductTag } = require('../../models');
-// var jsonParser = bodyParser.json()
 
 // The `/api/tags` endpoint
 
@@ -24,7 +22,6 @@ router.get('/', (req, res) => {
       console.log(err);
       res.status(500).json(err);
     })
-  // be sure to include its associated Product data
 });
 
 router.get('/:id', (req, res) => {
@@ -55,13 +52,11 @@ router.get('/:id', (req, res) => {
       console.log(err);
       res.status(500).json(err);
     });
-  // be sure to include its associated Product data
 });
 
 router.post('/', (req, res) => {
   // create a new tag
   Tag.create({
-    // tag_id: req.body.tag_id,
     tag_name: req.body.tag_name
   })
     .then(dbTagData => res.json(dbTagData))
