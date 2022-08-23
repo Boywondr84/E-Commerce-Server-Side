@@ -13,10 +13,11 @@ router.get('/', (req, res) => {
       {
         model: Product,
         through: ProductTag,
-        as: 'tag_id',
-        foreignKey: 'tag_id'
+        as: 'products',
+        attributes: ['id', 'product_name', 'price', 'stock', 'category_id']
       }
-    ]
+    ],
+
   })
     .then(dbTagData => res.json(dbTagData))
     .catch(err => {
@@ -34,11 +35,11 @@ router.get('/:id', (req, res) => {
       {
         model: Product,
         through: ProductTag,
-        as: 'tag_id',
-        foreignKey: 'tag_id'
+        as: 'products',
+        attributes: ['id', 'product_name', 'price', 'stock', 'category_id']
       }
     ],
-    
+
     where: {
       id: req.params.id
     }
@@ -60,6 +61,7 @@ router.get('/:id', (req, res) => {
 router.post('/', (req, res) => {
   // create a new tag
   Tag.create({
+    tag_id: req.body.tag_id,
     tag_name: req.body.tag_name
   })
     .then(dbTagData => res.json(dbTagData))

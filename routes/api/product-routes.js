@@ -11,18 +11,17 @@ router.get('/', (req, res) => {
     include: [
       {
         model: Category,
-        attributes: ['category_name']
+        attributes: ['id', 'category_name']
       }
     ],
 
-    include: [
-      {
-        model: Tag,
-        through: ProductTag,
-        as: 'product_id',
-        foreignKey: 'product_id'
-      }
-    ]
+    // include: [
+    //   {
+    //     model: Tag,
+    //     through: ProductTag,
+    //     as: 'tags',
+    //   }
+    // ]
   })
     .then(dbProdData => res.json(dbProdData))
     .catch(err => {
@@ -37,19 +36,18 @@ router.get('/:id', (req, res) => {
   // find a single product by its `id`
   Product.findOne({
 
-    include: [
-      {
-        model: Category,
-        attributes: ['category_name']
-      }
-    ],
+    // include: [
+    //   {
+    //     model: Category,
+    //     attributes: ['category_name']
+    //   }
+    // ],
 
     include: [
       {
         model: Tag,
         through: ProductTag,
-        as: 'product_id',
-        foreignKey: 'product_id'
+        as: 'product_id'
       }
     ],
 
@@ -79,8 +77,7 @@ router.post('/', (req, res) => {
     product_name: req.body.product_name,
     price: req.body.price,
     stock: req.body.stock,
-    category_id: req.body.category_id,
-    product_id: req.body.product_id
+    tagIds: [1,2,3,4]
   })
 
     // Product.create(req.body)
@@ -110,11 +107,19 @@ router.put('/:id', (req, res) => {
   // update product data
   Product.update(
     {
-      product_name: req.body.product_name,
-      price: req.body.price,
-      stock: req.body.stock,
-      category_id: req.body.category_id,
-      tag_id: req.body.tag_id
+      include: [
+        {
+          model: Product,
+          attributes: ['id', 'product_name', 'price', 'stock', 'category_id']
+        }
+      ],
+
+      include: [
+      {
+        model: ProductTag,
+        attributes: ['id', 'product_id', 'tag_id']
+      }
+      ]
     },
     {
       where: {
